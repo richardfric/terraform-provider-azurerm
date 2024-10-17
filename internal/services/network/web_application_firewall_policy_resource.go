@@ -396,6 +396,13 @@ func resourceWebApplicationFirewallPolicy() *pluginsdk.Resource {
 							Default:  true,
 						},
 
+						"file_upload_enforcement": {
+							Type: pluginsdk.TypeBool,
+							// This value defaults to true but is only available under certain conditions
+							Optional: true,
+							Computed: true,
+						},
+
 						"max_request_body_size_in_kb": {
 							Type:         pluginsdk.TypeInt,
 							Optional:     true,
@@ -727,12 +734,14 @@ func expandWebApplicationFirewallPolicyPolicySettings(input []interface{}) *weba
 	mode := v["mode"].(string)
 	requestBodyCheck := v["request_body_check"].(bool)
 	requestBodyEnforcement := v["request_body_enforcement"].(bool)
+	fileUploadEnforcement := v["file_upload_enforcement"].(bool)
 	maxRequestBodySizeInKb := v["max_request_body_size_in_kb"].(int)
 	fileUploadLimitInMb := v["file_upload_limit_in_mb"].(int)
 
 	result := webapplicationfirewallpolicies.PolicySettings{
 		State:                             pointer.To(enabled),
 		Mode:                              pointer.To(webapplicationfirewallpolicies.WebApplicationFirewallMode(mode)),
+		FileUploadEnforcement:             pointer.To(fileUploadEnforcement),
 		RequestBodyCheck:                  pointer.To(requestBodyCheck),
 		RequestBodyEnforcement:            pointer.To(requestBodyEnforcement),
 		MaxRequestBodySizeInKb:            pointer.To(int64(maxRequestBodySizeInKb)),
